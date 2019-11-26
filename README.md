@@ -10,6 +10,7 @@
 - Setup IAM for cloudbuild: https://cloud.google.com/cloud-build/docs/deploying-builds/deploy-cloud-run
 - Configure your: `.env` (`cp .env.example .env`)
 - Configure your: `cloudbuild.yaml`
+- Run `scripts/createTable.js`
 
 ## LICENSE
 

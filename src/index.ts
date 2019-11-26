@@ -1,10 +1,13 @@
-const dotenv = require("dotenv");
-const express = require("express");
-const Bigtable = require("@google-cloud/bigtable");
+import dotenv from "dotenv";
+import express from "express";
+import path from "path";
+import { Bigtable } from "@google-cloud/bigtable";
 
-dotenv.config();
+dotenv.config({
+  path: path.join(__dirname, "../.env")
+});
 
-let _instance = null;
+let _instance: any = null;
 function getBigTableInstance() {
   if (_instance) {
     return _instance;
@@ -20,7 +23,7 @@ const {
   COLUMN_QUALIFIER,
   INSTANCE_ID,
   TABLE_ID
-} = process.env;
+} = process.env as any;
 
 const app = express();
 
@@ -28,7 +31,7 @@ if (!INSTANCE_ID) {
   throw new Error("Environment variables for INSTANCE_ID must be set!");
 }
 
-function getRowGreeting(row) {
+function getRowGreeting(row: any) {
   return row.data[COLUMN_FAMILY_ID][COLUMN_QUALIFIER][0].value;
 }
 
@@ -75,13 +78,12 @@ async function runBigTable() {
   }
 }
 
-app.get("/", (_req, res) => {
+app.get("/", (_req: any, res: any) => {
   console.log("Hello world received a request.");
-  const target = process.env.TARGET || "World";
-  res.send(`Hello ${target} with cloudbuild`);
+  res.send(`Hello, xxx`);
 });
 
-app.get("/bt", async (_req, res) => {
+app.get("/bt", async (_req: any, res: any) => {
   try {
     const ret = await runBigTable();
     res.json(ret);
