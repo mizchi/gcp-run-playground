@@ -1,9 +1,10 @@
 FROM node:12-slim
-WORKDIR /usr/src/app
-COPY package*.json ./
+WORKDIR /app
+COPY package.json ./
+COPY yarn.lock ./
+RUN yarn
 
-RUN npm install --only=production
-
-COPY . ./
+COPY .env ./
+COPY index.js index.js
 
 CMD [ "npm", "start" ]

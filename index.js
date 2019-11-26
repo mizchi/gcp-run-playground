@@ -3,6 +3,18 @@ const express = require("express");
 const Bigtable = require("@google-cloud/bigtable");
 
 dotenv.config();
+
+let _instance = null;
+function getBigTableInstance() {
+  if (_instance) {
+    return _instance;
+  }
+  const bigtableClient = new Bigtable();
+  const instance = bigtableClient.instance(INSTANCE_ID);
+  _instance = instance;
+  return instance;
+}
+
 const {
   COLUMN_FAMILY_ID,
   COLUMN_QUALIFIER,
@@ -16,15 +28,14 @@ if (!INSTANCE_ID) {
   throw new Error("Environment variables for INSTANCE_ID must be set!");
 }
 
-const bigtableClient = new Bigtable();
-const instance = bigtableClient.instance(INSTANCE_ID);
-const table = instance.table(TABLE_ID);
-
 function getRowGreeting(row) {
   return row.data[COLUMN_FAMILY_ID][COLUMN_QUALIFIER][0].value;
 }
 
 async function runBigTable() {
+  const instance = getBigTableInstance();
+  const table = instance.table(TABLE_ID);
+
   try {
     const [tableExists] = await table.exists();
     if (!tableExists) {
