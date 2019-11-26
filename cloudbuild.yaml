@@ -1,20 +1,20 @@
+substitutions:
+  _SERVICE_NAME: cloudrun-helloworld
+  _CONTAINER_NAME: cloudrun-helloworld
 steps:
-  # Build the container image
   - name: "gcr.io/cloud-builders/docker"
-    args: ["build", "-t", "gcr.io/ferrous-arch-90702/cloudrun-helloworld", "."]
-  # Push the container image to Container Registry
+    args: ["build", "-t", "gcr.io/$PROJECT_ID/${_CONTAINER_NAME}", "."]
   - name: "gcr.io/cloud-builders/docker"
-    args: ["push", "gcr.io/ferrous-arch-90702/cloudrun-helloworld"]
-    # Deploy an image from Container Registry to Cloud Run
+    args: ["push", "gcr.io/$PROJECT_ID/${_CONTAINER_NAME}"]
   - name: "gcr.io/cloud-builders/gcloud"
     args:
       [
         "beta",
         "run",
         "deploy",
-        "cloudrun-helloworld",
+        "${_SERVICE_NAME}",
         "--image",
-        "gcr.io/ferrous-arch-90702/cloudrun-helloworld",
+        "gcr.io/$PROJECT_ID/${_CONTAINER_NAME}",
         "--region",
         "asia-northeast1",
         "--platform",

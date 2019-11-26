@@ -7,6 +7,12 @@
     "start": "node index.js"
   },
   "dependencies": {
+    "@google-cloud/bigtable": "^2.2.3",
+    "dotenv": "^8.2.0",
     "express": "^4.17.1"
+  },
+  "devDependencies": {
+    "ts-node": "^8.5.2",
+    "typescript": "^3.7.2"
   }
 }
