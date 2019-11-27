@@ -2,13 +2,20 @@ import dotenv from "dotenv";
 import express from "express";
 import path from "path";
 import { Bigtable } from "@google-cloud/bigtable";
+import { Instance as BigtableInstance } from "@google-cloud/bigtable/build/src/instance";
 
 dotenv.config({
   path: path.join(__dirname, "../.env")
 });
+const {
+  COLUMN_FAMILY_ID,
+  COLUMN_QUALIFIER,
+  INSTANCE_ID,
+  TABLE_ID
+} = process.env as any;
 
-let _instance: any = null;
-function getBigTableInstance() {
+let _instance: BigtableInstance | null = null;
+function getBigTableInstance(): BigtableInstance {
   if (_instance) {
     return _instance;
   }
@@ -17,13 +24,6 @@ function getBigTableInstance() {
   _instance = instance;
   return instance;
 }
-
-const {
-  COLUMN_FAMILY_ID,
-  COLUMN_QUALIFIER,
-  INSTANCE_ID,
-  TABLE_ID
-} = process.env as any;
 
 const app = express();
 
@@ -40,6 +40,7 @@ async function runBigTable() {
   const table = instance.table(TABLE_ID);
 
   try {
+    // @ts-ignore
     const [tableExists] = await table.exists();
     if (!tableExists) {
       throw new Error(`${TABLE_ID} does not exists`);
@@ -58,6 +59,7 @@ async function runBigTable() {
         }
       }
     ];
+    // @ts-ignore
     await table.insert(rowsToInsert);
 
     const filter = [
@@ -69,6 +71,7 @@ async function runBigTable() {
     ];
 
     console.log("Reading a single row by row key");
+    // @ts-ignore
     const [singleRow] = await table.row("greeting0").get({ filter });
     console.log(`${getRowGreeting(singleRow)}`);
 

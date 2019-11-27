@@ -1,0 +1,24 @@
+substitutions:
+  _SERVICE_NAME: cloudrun-helloworld
+  _CONTAINER_NAME: cloudrun-helloworld
+  _REGION: asia-northeast1
+steps:
+  - name: "build"
+    args: ["build", "-t", "gcr.io/$PROJECT_ID/${_CONTAINER_NAME}", "."]
+  - name: "gcr.io/cloud-builders/docker"
+    args: ["push", "gcr.io/$PROJECT_ID/${_CONTAINER_NAME}"]
+  - name: "gcr.io/cloud-builders/gcloud"
+    args:
+      [
+        "beta",
+        "run",
+        "deploy",
+        "${_SERVICE_NAME}",
+        "--image",
+        "gcr.io/$PROJECT_ID/${_CONTAINER_NAME}",
+        "--region",
+        "${_REGION}",
+        "--platform",
+        "managed",
+        "--allow-unauthenticated",
+      ]

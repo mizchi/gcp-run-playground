@@ -1,24 +1,19 @@
-substitutions:
-  _SERVICE_NAME: cloudrun-helloworld
-  _CONTAINER_NAME: cloudrun-helloworld
-  _REGION: asia-northeast1
 steps:
-  - name: "gcr.io/cloud-builders/docker"
-    args: ["build", "-t", "gcr.io/$PROJECT_ID/${_CONTAINER_NAME}", "."]
-  - name: "gcr.io/cloud-builders/docker"
-    args: ["push", "gcr.io/$PROJECT_ID/${_CONTAINER_NAME}"]
-  - name: "gcr.io/cloud-builders/gcloud"
+  - name: gcr.io/cloud-builders/gcloud
+    entrypoint: bash
     args:
-      [
-        "beta",
-        "run",
-        "deploy",
-        "${_SERVICE_NAME}",
-        "--image",
-        "gcr.io/$PROJECT_ID/${_CONTAINER_NAME}",
-        "--region",
-        "${_REGION}",
-        "--platform",
-        "managed",
-        "--allow-unauthenticated",
-      ]
+      - -c
+      - |
+        for d in services/*/; do
+          echo $d;
+          config="${d}cloudbuild.yaml"
+          if [[ ! -f "${config}" ]]; then
+            continue
+          fi
+
+          echo "Building $d ... "
+          (
+            gcloud builds submit $d --config=${config}
+          ) &
+        done
+        wait
