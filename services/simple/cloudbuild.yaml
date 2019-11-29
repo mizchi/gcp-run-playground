@@ -1,0 +1,24 @@
+substitutions:
+  _SERVICE_NAME: test-mizchi-simple
+  _CONTAINER_NAME: test-mizchi-simple
+  _REGION: asia-northeast1
+steps:
+  - name: "gcr.io/cloud-builders/docker"
+    args: ["build", "-t", "gcr.io/$PROJECT_ID/${_CONTAINER_NAME}", "."]
+  - name: "gcr.io/cloud-builders/docker"
+    args: ["push", "gcr.io/$PROJECT_ID/${_CONTAINER_NAME}"]
+  - name: "gcr.io/cloud-builders/gcloud"
+    args:
+      [
+        "beta",
+        "run",
+        "deploy",
+        "${_SERVICE_NAME}",
+        "--image",
+        "gcr.io/$PROJECT_ID/${_CONTAINER_NAME}",
+        "--region",
+        "${_REGION}",
+        "--platform",
+        "managed",
+        "--allow-unauthenticated",
+      ]
