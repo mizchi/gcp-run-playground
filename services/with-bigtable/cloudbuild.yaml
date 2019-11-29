@@ -1,9 +1,9 @@
 substitutions:
-  _SERVICE_NAME: cloudrun-helloworld
-  _CONTAINER_NAME: cloudrun-helloworld
+  _SERVICE_NAME: test-with-bigtable
+  _CONTAINER_NAME: test-with-bigtable
   _REGION: asia-northeast1
 steps:
-  - name: "build"
+  - name: "gcr.io/cloud-builders/docker"
     args: ["build", "-t", "gcr.io/$PROJECT_ID/${_CONTAINER_NAME}", "."]
   - name: "gcr.io/cloud-builders/docker"
     args: ["push", "gcr.io/$PROJECT_ID/${_CONTAINER_NAME}"]
